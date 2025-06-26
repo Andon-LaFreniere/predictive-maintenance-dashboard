@@ -100,7 +100,7 @@ async def startup_event():
 async def root():
     """Serve the main dashboard"""
     try:
-        with open("static/index.html", "r") as f:
+        with open("static/index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="""
@@ -114,6 +114,23 @@ async def root():
                     <li><a href="/docs">API Documentation</a></li>
                     <li><a href="/equipment">Equipment List</a></li>
                     <li><a href="/dashboard">Dashboard Data</a></li>
+                </ul>
+            </body>
+        </html>
+        """)
+    except UnicodeDecodeError:
+        logger.error("Unicode decode error reading index.html")
+        return HTMLResponse(content="""
+        <html>
+            <head><title>Predictive Maintenance System</title></head>
+            <body>
+                <h1>Dashboard Loading Error</h1>
+                <p>There was an encoding issue with the dashboard file.</p>
+                <p>Try accessing the API directly:</p>
+                <ul>
+                    <li><a href="/docs">API Documentation</a></li>
+                    <li><a href="/dashboard">Dashboard Data (JSON)</a></li>
+                    <li><a href="/equipment">Equipment List</a></li>
                 </ul>
             </body>
         </html>
